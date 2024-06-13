@@ -505,30 +505,23 @@ long rotateLeft(long x, long n) {
 */
 
 long isPalindrome(long x) {
-    long r = x >> 32;
+    long x_ = x;
+    long a_x = 0xFF << 8 | 0xFF;
+    long a0 = a_x | (a_x << 16);
+    long a1 = a0 ^ (a0 << 16);
+    long a2 = a1 ^ (a1 << 8);
+    long a3 = a2 ^ (a2 << 4);
+    long a4 = a3 ^ (a3 << 2);
+    long a5 = a4 ^ (a4 << 1);
 
-    long mask1 = 0x55 | (0x55 << 8);
-    long mask2 = mask1 | (mask1 << 16);
-    r = ((r & mask2) << 1) | ((r >> 1) & mask2);
+    x_ = (x_ << 32) | ((x_ >> 32) & a0);
+    x_ = ((x_ & a1) << 16) | ((x_ >> 16) & a1);
+    x_ = ((x_ & a2) << 8) | ((x_ >> 8) & a2);
+    x_ = ((x_ & a3) << 4) | ((x_ >> 4) & a3);
+    x_ = ((x_ & a4) << 2) | ((x_ >> 2) & a4);
+    x_ = ((x_ & a5) << 1) | ((x_ >> 1) & a5);
 
-    long mask3 = 0x33 | (0x33 << 8);
-    long mask4 = mask3 | (mask3 << 16);
-    r = ((r & mask4) << 2) | ((r >> 2) & mask4);
-
-    long mask5 = 0x0f | (0x0f << 8);
-    long mask6 = mask5 | (mask5 << 16);
-    r = ((r & mask6) << 4) | ((r >> 4) & mask6);
-
-    long mask7 = 0xff | (0xff << 16);
-    long mask8 = mask7 | (mask7 << 8);
-    r = ((r & mask7) << 8) | ((r & mask8) >> 8);
-
-    long mask9 = 0xff | (0xff << 8);
-    long mask10 = mask9 | (mask9 << 16);
-    r = ((r & mask9) << 16) | ((r & mask10) >> 16);
-
-    long mask11 = (~0 + (1L << 32));
-    return !((r ^ x) & mask11);
+    return !(x ^ x_);
 }
 
 /*
